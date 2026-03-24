@@ -6,9 +6,7 @@
 
   <!-- Подключаем model-viewer и postprocessing -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <script type="module">
-    import '@google/model-viewer/dist/postprocessing.min.js';
-  </script>
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/postprocessing.min.js"></script>
 
   <style>
     body {
@@ -17,16 +15,16 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: #ffffff; /* белый фон */
+      background: #ffffff;
       font-family: Arial, sans-serif;
     }
 
     model-viewer {
       width: 600px;
       height: 500px;
+      position: relative;
     }
 
-    /* Стили кнопки AR */
     button[slot="ar-button"] {
       position: absolute;
       bottom: 20px;
@@ -41,7 +39,6 @@
       cursor: pointer;
     }
 
-    /* Панель управления эффектами */
     .controls {
       position: absolute;
       top: 20px;
@@ -51,6 +48,7 @@
       border-radius: 6px;
       font-size: 14px;
     }
+
     .controls div {
       margin-bottom: 4px;
     }
@@ -69,7 +67,6 @@
   ar-modes="webxr scene-viewer quick-look"
   alt="3D модель LR8">
 
-  <!-- Кнопка AR -->
   <button slot="ar-button">Посмотреть в AR</button>
 
   <!-- Эффекты пост-обработки -->
@@ -93,19 +90,22 @@
     <div><input type="checkbox" id="pixelate"><label for="pixelate">Pixelate Effect</label></div>
     <div><input type="checkbox" id="colorgrade" checked><label for="colorgrade">Color Grade Effect</label></div>
   </div>
+
 </model-viewer>
 
 <script type="module">
   const model = document.querySelector("#effectsViewer");
-  const effects = model.querySelector("effect-composer").children;
+
+  // Доступ к эффектам через effectComposer
+  const effects = model.effectComposer.effects;
   const inputs = model.querySelectorAll(".controls input");
 
   // Привязка чекбоксов к эффектам
-  for (let i = 0; i < effects.length; i++) {
-    inputs[i].addEventListener('change', (e) => {
+  inputs.forEach((input, i) => {
+    input.addEventListener('change', (e) => {
       effects[i].blendMode = e.target.checked ? 'default' : 'skip';
     });
-  }
+  });
 
   // Автозапуск анимации и плавный переход на "Танец"
   model.addEventListener("load", () => {
