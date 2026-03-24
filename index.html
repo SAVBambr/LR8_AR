@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Анимация 3D модели LR7</title>
+
+  <!-- Подключаем model-viewer и postprocessing -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script type="module">
+    import '@google/model-viewer/dist/postprocessing.min.js';
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #ffffff; /* белый фон */
+      font-family: Arial, sans-serif;
+    }
+
+    model-viewer {
+      width: 600px;
+      height: 500px;
+    }
+
+    /* Стили кнопки AR */
+    button[slot="ar-button"] {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5em 1em;
+      font-size: 16px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Панель управления эффектами */
+    .controls {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.9);
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .controls div {
+      margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<model-viewer
+  id="effectsViewer"
+  src="LR7.glb"
+  ios-src="LR7.usdz"
+  camera-controls
+  autoplay
+  animation-name="Приветствие"
+  ar
+  ar-modes="webxr scene-viewer quick-look"
+  alt="3D модель LR7">
+
+  <!-- Кнопка AR -->
+  <button slot="ar-button">Посмотреть в AR</button>
+
+  <!-- Эффекты пост-обработки -->
+  <effect-composer render-mode="quality">
+    <bloom-effect blend-mode="default"></bloom-effect>
+    <color-grade-effect blend-mode="default"></color-grade-effect>
+    <vignette-effect blend-mode="default"></vignette-effect>
+  </effect-composer>
+
+  <!-- Панель управления эффектами -->
+  <div class="controls glass">
+    <div><input type="checkbox" id="bloom" checked><label for="bloom">Bloom</label></div>
+    <div><input type="checkbox" id="colorgrade" checked><label for="colorgrade">Color Grade</label></div>
+    <div><input type="checkbox" id="vignette" checked><label for="vignette">Vignette</label></div>
+  </div>
+</model-viewer>
+
+<script type="module">
+  const model = document.querySelector("#effectsViewer");
+  const effects = model.querySelector("effect-composer").children;
+  const inputs = model.querySelectorAll("input");
+
+  // Привязка чекбоксов к эффектам
+  for (let i = 0; i < effects.length; i++) {
+    inputs[i].addEventListener('change', (e) => {
+      effects[i].blendMode = e.target.checked ? 'default' : 'skip';
+    });
+  }
+
+  // Автозапуск анимации и плавный переход на "Танец"
+  model.addEventListener("load", () => {
+    setTimeout(() => {
+      model.animationName = "Танец";
+      model.play({
+        repetitions: Infinity,
+        crossfadeDuration: 1000
+      });
+    }, 3000);
+  });
+</script>
+
+</body>
+</html>
