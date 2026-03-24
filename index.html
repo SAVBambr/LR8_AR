@@ -38,24 +38,6 @@
       border-radius: 4px;
       cursor: pointer;
     }
-
-    .controls {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(255,255,255,0.9);
-      padding: 10px;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    .controls div {
-      margin-bottom: 4px;
-    }
-
-    input[type="range"] {
-      width: 100%;
-    }
   </style>
 </head>
 <body>
@@ -76,28 +58,13 @@
 
   <!-- Эффект пост-обработки: насыщенность цвета -->
   <effect-composer render-mode="quality">
-    <color-grade-effect id="colorEffect" blend-mode="default" saturation="1"></color-grade-effect>
+    <color-grade-effect blend-mode="default" saturation="1.7"></color-grade-effect>
   </effect-composer>
-
-  <!-- Панель управления насыщенностью -->
-  <div class="controls">
-    <div>
-      <label for="saturation">Насыщенность цвета</label>
-      <input type="range" id="saturation" min="0" max="2" step="0.01" value="1">
-    </div>
-  </div>
 
 </model-viewer>
 
 <script type="module">
   const model = document.querySelector("#effectsViewer");
-  const colorEffect = model.querySelector("#colorEffect");
-  const saturationInput = document.querySelector("#saturation");
-
-  // Меняем насыщенность цвета через ползунок
-  saturationInput.addEventListener("input", (e) => {
-    colorEffect.saturation = parseFloat(e.target.value);
-  });
 
   // Автозапуск анимации с плавным переходом
   model.addEventListener("load", () => {
