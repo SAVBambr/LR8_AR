@@ -2,10 +2,10 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Анимация 3D модели LR8</title>
+  <title>3D модель LR8 с эффектами</title>
 
-  <!-- Подключаем model-viewer и postprocessing -->
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <!-- Экспериментальная сборка model-viewer с поддержкой postprocessing -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js?module&experimental=true"></script>
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/postprocessing.min.js"></script>
 
   <style>
@@ -65,7 +65,8 @@
   animation-name="Приветствие"
   ar
   ar-modes="webxr scene-viewer quick-look"
-  alt="3D модель LR8">
+  alt="3D модель LR8"
+  enable-webxr-effects>
 
   <button slot="ar-button">Посмотреть в AR</button>
 
@@ -81,14 +82,14 @@
   </effect-composer>
 
   <!-- Панель управления эффектами -->
-  <div class="controls glass">
-    <div><input type="checkbox" id="outline"><label for="outline">Outline Effect</label></div>
-    <div><input type="checkbox" id="ssao"><label for="ssao">SSAO Effect</label></div>
-    <div><input type="checkbox" id="glitch"><label for="glitch">Glitch Effect</label></div>
-    <div><input type="checkbox" id="smaa"><label for="smaa">SMAA Effect</label></div>
-    <div><input type="checkbox" id="bloom"><label for="bloom">Bloom Effect</label></div>
-    <div><input type="checkbox" id="pixelate"><label for="pixelate">Pixelate Effect</label></div>
-    <div><input type="checkbox" id="colorgrade" checked><label for="colorgrade">Color Grade Effect</label></div>
+  <div class="controls">
+    <div><input type="checkbox" id="outline"><label for="outline">Outline</label></div>
+    <div><input type="checkbox" id="ssao"><label for="ssao">SSAO</label></div>
+    <div><input type="checkbox" id="glitch"><label for="glitch">Glitch</label></div>
+    <div><input type="checkbox" id="smaa"><label for="smaa">SMAA</label></div>
+    <div><input type="checkbox" id="bloom"><label for="bloom">Bloom</label></div>
+    <div><input type="checkbox" id="pixelate"><label for="pixelate">Pixelate</label></div>
+    <div><input type="checkbox" id="colorgrade" checked><label for="colorgrade">Color Grade</label></div>
   </div>
 
 </model-viewer>
@@ -96,19 +97,18 @@
 <script type="module">
   const model = document.querySelector("#effectsViewer");
 
-  // Доступ к эффектам через effectComposer
-  const effects = model.effectComposer.effects;
-  const inputs = model.querySelectorAll(".controls input");
-
-  // Привязка чекбоксов к эффектам
-  inputs.forEach((input, i) => {
-    input.addEventListener('change', (e) => {
-      effects[i].blendMode = e.target.checked ? 'default' : 'skip';
-    });
-  });
-
-  // Автозапуск анимации и плавный переход на "Танец"
+  // Ждем, пока effectComposer и эффекты инициализируются
   model.addEventListener("load", () => {
+    const effects = model.effectComposer.effects;
+    const inputs = model.querySelectorAll(".controls input");
+
+    inputs.forEach((input, i) => {
+      input.addEventListener('change', (e) => {
+        effects[i].blendMode = e.target.checked ? 'default' : 'skip';
+      });
+    });
+
+    // Автозапуск анимации с плавным переходом
     setTimeout(() => {
       model.animationName = "Танец";
       model.play({
