@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>3D модель LR8 с эффектами</title>
+  <title>3D модель LR8 с насыщенностью цвета</title>
 
   <!-- Экспериментальная сборка model-viewer с поддержкой postprocessing -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js?module&experimental=true"></script>
@@ -52,6 +52,10 @@
     .controls div {
       margin-bottom: 4px;
     }
+
+    input[type="range"] {
+      width: 100%;
+    }
   </style>
 </head>
 <body>
@@ -70,45 +74,33 @@
 
   <button slot="ar-button">Посмотреть в AR</button>
 
-  <!-- Эффекты пост-обработки -->
+  <!-- Эффект пост-обработки: насыщенность цвета -->
   <effect-composer render-mode="quality">
-    <outline-effect color="blue" blend-mode="skip"></outline-effect>
-    <ssao-effect blend-mode="skip"></ssao-effect>
-    <glitch-effect blend-mode="skip"></glitch-effect>
-    <smaa-effect blend-mode="skip"></smaa-effect>
-    <bloom-effect blend-mode="skip"></bloom-effect>
-    <pixelate-effect granularity="5" blend-mode="skip"></pixelate-effect>
-    <color-grade-effect blend-mode="default"></color-grade-effect>
+    <color-grade-effect id="colorEffect" blend-mode="default" saturation="1"></color-grade-effect>
   </effect-composer>
 
-  <!-- Панель управления эффектами -->
+  <!-- Панель управления насыщенностью -->
   <div class="controls">
-    <div><input type="checkbox" id="outline"><label for="outline">Outline</label></div>
-    <div><input type="checkbox" id="ssao"><label for="ssao">SSAO</label></div>
-    <div><input type="checkbox" id="glitch"><label for="glitch">Glitch</label></div>
-    <div><input type="checkbox" id="smaa"><label for="smaa">SMAA</label></div>
-    <div><input type="checkbox" id="bloom"><label for="bloom">Bloom</label></div>
-    <div><input type="checkbox" id="pixelate"><label for="pixelate">Pixelate</label></div>
-    <div><input type="checkbox" id="colorgrade" checked><label for="colorgrade">Color Grade</label></div>
+    <div>
+      <label for="saturation">Насыщенность цвета</label>
+      <input type="range" id="saturation" min="0" max="2" step="0.01" value="1">
+    </div>
   </div>
 
 </model-viewer>
 
 <script type="module">
   const model = document.querySelector("#effectsViewer");
+  const colorEffect = model.querySelector("#colorEffect");
+  const saturationInput = document.querySelector("#saturation");
 
-  // Ждем, пока effectComposer и эффекты инициализируются
+  // Меняем насыщенность цвета через ползунок
+  saturationInput.addEventListener("input", (e) => {
+    colorEffect.saturation = parseFloat(e.target.value);
+  });
+
+  // Автозапуск анимации с плавным переходом
   model.addEventListener("load", () => {
-    const effects = model.effectComposer.effects;
-    const inputs = model.querySelectorAll(".controls input");
-
-    inputs.forEach((input, i) => {
-      input.addEventListener('change', (e) => {
-        effects[i].blendMode = e.target.checked ? 'default' : 'skip';
-      });
-    });
-
-    // Автозапуск анимации с плавным переходом
     setTimeout(() => {
       model.animationName = "Танец";
       model.play({
